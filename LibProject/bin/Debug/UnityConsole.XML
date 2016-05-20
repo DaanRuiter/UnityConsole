@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UnityConsole</name>
+    </assembly>
+    <members>
+        <member name="T:DaanRuiter.Util.ConsolePrintInfo">
+            <summary>
+            Info container for console log entries
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.ConsolePrintInfo.#ctor(UnityEngine.LogType,System.String,System.String,System.Boolean,UnityEngine.Color)">
+            <summary>
+            Construcs the ConsolePrintInfo
+            </summary>
+            <param name="type">The type of log. Is either: Log, Warning, Error or Exception</param>
+            <param name="message">The message to display in the console</param>
+            <param name="stackTrace">The stacktrace to the where the log was called from</param>
+            <param name="command">Is this a command (not used ATM)</param>
+            <param name="color">Custom color of the message</param>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.type">
+            <summary>
+            The type of log. Is either: Log, Warning, Error or Exception
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.message">
+            <summary>
+            The message to display in the console
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.stackTrace">
+            <summary>
+            The stacktrace to the where the log was called from
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.command">
+            <summary>
+            Was this a command (not used ATM)
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.stackSize">
+            <summary>
+            The size of the stacktrace
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.color">
+            <summary>
+            The color if a custom color was set
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsolePrintInfo.lineCount">
+            <summary>
+            The amount of lines in the message
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.ConsolePrintInfo.SetColor(UnityEngine.Color)">
+            <summary>
+            Set the color of the log entry
+            </summary>
+            <param name="color"></param>
+        </member>
+        <member name="T:DaanRuiter.Util.ConsoleCommand">
+            <summary>
+            Add this attribute on your commands and they will automaticly be added to the console's list
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.ConsoleCommand.#ctor(System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="description">Description that is displayed When ListCommands is called</param>
+            <param name="hidden">If the method should be displayed wehn ListCommadns is called</param>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsoleCommand.hidden">
+            <summary>
+            Is the command hidden
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsoleCommand.description">
+            <summary>
+            Description of the command, displayed when ListCommands is called
+            </summary>
+        </member>
+        <member name="T:DaanRuiter.Util.CMD">
+            <summary>
+            The main class of the console, you only need to call this class to fully make use of the console
+            To add your own commands, give a reference to your project's assembly as parameter when calling RefreshCommands()
+            Example: CMD.RefreshCommands(new Assembly[] { Assembly.GetAssembly(typeof(ANY_MONOBEHAVIOUR_SCRIPT_IN_YOUR_PROJECT)) } );
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Init(UnityEngine.GameObject)">
+            <summary>
+            Initializes the Console, must be called to be able to use it
+            </summary>
+            <param name="consoleObject">The gameobject the initialized console component is added to</param>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Disable">
+            <summary>
+            Disable the console, use this to block end-users from using the console
+            When disabled, Init will do nothing
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Enable">
+            <summary>
+            Enable the console
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.RefreshCommands(System.Reflection.Assembly[])">
+            <summary>
+            Searches for commands in the projects Assembly. Is automaticly called on Init() if RefreshCommands() was has not been called yet
+            </summary>
+            <param name="assemblies">assemblies to search in. Defaults to the assembly of the CMD class</param>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Log(System.Object)">
+            <summary>
+            Logs a message to the console
+            </summary>
+            <param name="message">Message to log</param>
+            <returns>Info of the message</returns>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Warning(System.String)">
+            <summary>
+            Logs a warning to the console
+            </summary>
+            <param name="warning">Warning message</param>
+            <returns>Info of the message</returns>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Error(System.String)">
+            <summary>
+            Logs an error to the console. Stacktrace is automaticly added
+            </summary>
+            <param name="error">Error message</param>
+            <returns>Info of the message</returns>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.Error(System.Exception)">
+            <summary>
+            Logs an exception to the console. Stacktrace is automaticly added
+            </summary>
+            <param name="exception">Exception</param>
+            <returns>Info of the message</returns>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.GenerateVerticalGradientTexture(UnityEngine.Color[],System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Generates a texture using a Unity gradient as color
+            </summary>
+            <param name="colors">the colors to use for the gradient</param>
+            <param name="alphas">the alpha values to use for the gradient</param>
+            <param name="width">Width of the texture (1 is recommended)</param>
+            <param name="height">Height of the texture</param>
+            <returns>Texture with a gradient</returns>
+        </member>
+        <member name="P:DaanRuiter.Util.CMD.fontSize">
+            <summary>
+            The fontsize used to for the log entries
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.CMD.windowSize">
+            <summary>
+            The size of the console's window
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.CMD.enableKeyCode">
+            <summary>
+            The key that enables the console
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.CMD.windowPosition">
+            <summary>
+            The poistion of the console
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.CMD.openConsoleOnError">
+            <summary>
+            Should the console automaticly open when an error/excpetion is thrown
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.CMD.windowTexture">
+            <summary>
+            The texture used as background for the main window
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,7 @@
+c:\users\gebruiker\documents\libs\LibProject\LibProject\bin\Debug\LibProject.dll
+c:\users\gebruiker\documents\libs\LibProject\LibProject\bin\Debug\LibProject.pdb
+c:\users\gebruiker\documents\libs\LibProject\LibProject\bin\Debug\UnityEngine.dll
+c:\users\gebruiker\documents\libs\LibProject\LibProject\bin\Debug\UnityEngine.xml
+c:\users\gebruiker\documents\libs\LibProject\LibProject\obj\Debug\LibProject.csprojResolveAssemblyReference.cache
+c:\users\gebruiker\documents\libs\LibProject\LibProject\obj\Debug\LibProject.dll
+c:\users\gebruiker\documents\libs\LibProject\LibProject\obj\Debug\LibProject.pdb
