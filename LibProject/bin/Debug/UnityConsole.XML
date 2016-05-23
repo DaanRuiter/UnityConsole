@@ -82,6 +82,49 @@
             Description of the command, displayed when ListCommands is called
             </summary>
         </member>
+        <member name="T:DaanRuiter.Util.ConsoleButton">
+            <summary>
+            Info container for console button
+            </summary>
+        </member>
+        <member name="T:DaanRuiter.Util.ConsoleButton.OnConsoleButtonPressEventHandler">
+            <summary>
+            Delegate for when console button is pressed
+            </summary>
+        </member>
+        <member name="F:DaanRuiter.Util.ConsoleButton.OnButtonPressEvent">
+            <summary>
+            Event when console button is pressed
+            </summary>
+        </member>
+        <member name="F:DaanRuiter.Util.ConsoleButton.DisplayText">
+            <summary>
+            Text to be displayed inside the button
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsoleButton.Enabled">
+            <summary>
+            Is the enabled? If not, the button is greyed out.
+            </summary>
+        </member>
+        <member name="P:DaanRuiter.Util.ConsoleButton.CachedRect">
+            <summary>
+            The cached rect for the position within the button grid
+            </summary>
+        </member>
+        <member name="M:DaanRuiter.Util.ConsoleButton.#ctor(System.String,DaanRuiter.Util.ConsoleButton.OnConsoleButtonPressEventHandler)">
+            <summary>
+            Constructor for the console button
+            </summary>
+            <param name="displayText">Text to be displayed inside the button</param>
+            <param name="callback">Callback for when the button is pressed</param>
+        </member>
+        <member name="M:DaanRuiter.Util.ConsoleButton.SetColor(UnityEngine.Color)">
+            <summary>
+            
+            </summary>
+            <param name="color">Color/tint of the button</param>
+        </member>
         <member name="T:DaanRuiter.Util.CMD">
             <summary>
             The main class of the console, you only need to call this class to fully make use of the console
@@ -106,11 +149,36 @@
             Enable the console
             </summary>
         </member>
+        <member name="M:DaanRuiter.Util.CMD.ToggleConsole(System.Boolean)">
+            <summary>
+            Toggles the visibilty of the console on or off
+            </summary>
+            <param name="state">the state to toggle the console to</param>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.ToggleConsole">
+            <summary>
+            Toggles the console on if off, and off if on.
+            </summary>
+        </member>
         <member name="M:DaanRuiter.Util.CMD.RefreshCommands(System.Reflection.Assembly[])">
             <summary>
             Searches for commands in the projects Assembly. Is automaticly called on Init() if RefreshCommands() was has not been called yet
             </summary>
             <param name="assemblies">assemblies to search in. Defaults to the assembly of the CMD class</param>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.AddButton(System.String,DaanRuiter.Util.ConsoleButton.OnConsoleButtonPressEventHandler)">
+            <summary>
+            Add a new button the the button grid
+            </summary>
+            <param name="buttonText">Text to be displayed inside the button</param>
+            <param name="callBack">Callback for when the button is pressed</param>
+            <returns>The button created</returns>
+        </member>
+        <member name="M:DaanRuiter.Util.CMD.RemoveButton(DaanRuiter.Util.ConsoleButton)">
+            <summary>
+            Removes and destroys the button
+            </summary>
+            <param name="button">Button to remove</param>
         </member>
         <member name="M:DaanRuiter.Util.CMD.Log(System.Object)">
             <summary>

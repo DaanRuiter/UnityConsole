@@ -21,3 +21,6 @@ C:\Users\gebruiker\Documents\GitHub\UnityConsole\LibProject\bin\Debug\UnityEngin
 C:\Users\gebruiker\Documents\GitHub\UnityConsole\LibProject\obj\Debug\DaanRuiterUtil.csprojResolveAssemblyReference.cache
 C:\Users\gebruiker\Documents\GitHub\UnityConsole\LibProject\obj\Debug\UnityConsole.dll
 C:\Users\gebruiker\Documents\GitHub\UnityConsole\LibProject\obj\Debug\UnityConsole.pdb
+C:\Users\gebruiker\Documents\libs\Unity CMD Project\CMD\Assets\CMD\UnityConsole.dll
+C:\Users\gebruiker\Documents\libs\Unity CMD Project\CMD\Assets\CMD\UnityConsole.pdb
+C:\Users\gebruiker\Documents\libs\Unity CMD Project\CMD\Assets\CMD\UnityConsole.XML

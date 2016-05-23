@@ -197,6 +197,87 @@ namespace DaanRuiter.Util
             }
         }
     }
+    /// <summary>
+    /// Info container for console button
+    /// </summary>
+    public class ConsoleButton
+    {
+        //-----------------------------------------------------------------------//
+        //Delegates
+        /// <summary>
+        /// Delegate for when console button is pressed
+        /// </summary>
+        public delegate void OnConsoleButtonPressEventHandler ();
+        /// <summary>
+        /// Event when console button is pressed
+        /// </summary>
+        public OnConsoleButtonPressEventHandler OnButtonPressEvent;
+
+        //-----------------------------------------------------------------------//
+        //Public vars
+        /// <summary>
+        /// Text to be displayed inside the button
+        /// </summary>
+        public string DisplayText = "unassigned";
+        /// <summary>
+        /// Is the enabled? If not, the button is greyed out.
+        /// </summary>
+        public bool Enabled { get { return m_enabled; } set { m_enabled = value; } }
+        /// <summary>
+        /// The cached rect for the position within the button grid
+        /// </summary>
+        public Rect CachedRect { get { return m_cachedRect; } }
+
+        //Internal
+        internal Texture2D CustomTexture{ get { return m_customTexture; } }
+        internal Texture2D CustomHoverTexture{ get { return m_customTextureHighlight; } }
+        //-----------------------------------------------------------------------//
+        //Private vars
+        private bool m_enabled = true;
+        private Rect m_cachedRect;
+
+        private Texture2D m_customTexture;
+        private Texture2D m_customTextureHighlight;
+        //-----------------------------------------------------------------------//
+        //Public methods
+        /// <summary>
+        /// Constructor for the console button
+        /// </summary>
+        /// <param name="displayText">Text to be displayed inside the button</param>
+        /// <param name="callback">Callback for when the button is pressed</param>
+        public ConsoleButton (string displayText, OnConsoleButtonPressEventHandler callback)
+        {
+            DisplayText = displayText;
+            OnButtonPressEvent += callback;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="color">Color/tint of the button</param>
+        public void SetColor(Color color)
+        {
+            m_customTexture = CMD.GenerateVerticalGradientTexture(new Color[] { color * 0.35f, color * 0.55f },
+                                                                        new float[] { 0.95f, 0.7f },
+                                                                        1, 40);
+
+            m_customTextureHighlight = CMD.GenerateVerticalGradientTexture(new Color[] { color * 0.85f, color * 0.55f },
+                                                                        new float[] { 0.95f, 0.9f },
+                                                                        1, 20);
+        }
+        //-----------------------------------------------------------------------//
+        //Internal methods
+        internal void OnButtonPress ()
+        {
+            if (m_enabled)
+                if (OnButtonPressEvent != null)
+                    OnButtonPressEvent();
+        }
+
+        internal void CacheRect (Rect rect)
+        {
+            m_cachedRect = rect;
+        }
+    }
 
     /// <summary>
     /// The main class of the console, you only need to call this class to fully make use of the console
@@ -238,6 +319,14 @@ namespace DaanRuiter.Util
         private static int m_fontSize = 12;
         private static float m_widthPercentage = 50f;
         private static float m_heightPercentage = 60f;
+
+        private static Vector2 m_buttonMargin = new Vector2(2f, 1.5f);
+
+        private static int m_buttonFieldWidth = 400;
+        private static int m_buttonFieldHeight = 500;
+        private static int m_maxButtonsWidth = 4;
+        private static int m_maxButtonsHeight = 10;
+
         private static KeyCode m_enableKeyCode = KeyCode.F1;
 
         private static Vector2 m_minimalSize = new Vector2(100, 50);
@@ -258,6 +347,7 @@ namespace DaanRuiter.Util
         private static Texture2D m_resizeAreaTexture;
         private static Texture2D m_titleBarTexture;
         private static Texture2D m_closeButtonTexture;
+        private static Texture2D m_buttonBackground;
 
         //Cursors
         private static Texture2D m_resizeCursorTexture;
@@ -276,7 +366,10 @@ namespace DaanRuiter.Util
         private static List<ConsolePrintInfo> m_printCommands;
         private static List<MethodInfo> m_methods;
 
-        #region Initial Methods
+        //Buttons
+        private static List<ConsoleButton> m_buttons;
+
+        #region Public Methods
         /// <summary>
         /// Initializes the Console, must be called to be able to use it
         /// </summary>
@@ -328,6 +421,9 @@ namespace DaanRuiter.Util
             m_resizeAreaTexture = new Texture2D(1, 1);
             m_resizeAreaTexture.SetPixel(0, 0, m_inputActiveBackgroundColor);
             m_resizeAreaTexture.Apply();
+            m_buttonBackground = GenerateVerticalGradientTexture(new Color[] { Color.grey * 0.35f, Color.grey * 0.55f },
+                                                                        new float[] { 0.95f, 0.7f },
+                                                                        1, 40);
 
             //Get cursor textures
             m_inputCursorTexture = Resources.Load<Texture2D>("CMD/Images/Cur_Input");
@@ -335,8 +431,9 @@ namespace DaanRuiter.Util
             m_moveCursorTexture = Resources.Load<Texture2D>("CMD/Images/Cur_Move");
             m_clickCursorTexture = Resources.Load<Texture2D>("CMD/Images/Cur_Click");
 
-            //Inizialize list of stored logs
+            //Inizialize lists
             m_printCommands = new List<ConsolePrintInfo>();
+            m_buttons = new List<ConsoleButton>();
 
             //Default state is disabled
             m_enabled = false;
@@ -365,6 +462,26 @@ namespace DaanRuiter.Util
             m_forceDisable = false;
             if(m_skin != null)
                 Application.logMessageReceivedThreaded += OnLogMessageReceive;
+        }
+        /// <summary>
+        /// Toggles the visibilty of the console on or off
+        /// </summary>
+        /// <param name="state">the state to toggle the console to</param>
+        public static void ToggleConsole (bool state)
+        {
+            m_enabled = state;
+            m_isTyping = m_enabled;
+            m_inputString = "";
+            EndDrag();
+            EndResize();
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+        /// <summary>
+        /// Toggles the console on if off, and off if on.
+        /// </summary>
+        public static void ToggleConsole ()
+        {
+            ToggleConsole(!m_enabled);
         }
 
         /// <summary>
@@ -407,6 +524,34 @@ namespace DaanRuiter.Util
             }
             //Print refresh duration
             Log("Refreshed Commands in " + (Time.realtimeSinceStartup - startTime) + "ms");
+        }
+
+        /// <summary>
+        /// Add a new button the the button grid
+        /// </summary>
+        /// <param name="buttonText">Text to be displayed inside the button</param>
+        /// <param name="callBack">Callback for when the button is pressed</param>
+        /// <returns>The button created</returns>
+        public static ConsoleButton AddButton(string buttonText, ConsoleButton.OnConsoleButtonPressEventHandler callBack)
+        {
+            ConsoleButton button = new ConsoleButton(buttonText, callBack);
+
+            int index = m_buttons.Count;
+
+            m_buttons.Add(button);
+
+            RecalculateButtonRectangles(index);
+
+            return button;
+        }
+        /// <summary>
+        /// Removes and destroys the button
+        /// </summary>
+        /// <param name="button">Button to remove</param>
+        public static void RemoveButton (ConsoleButton button)
+        {
+            m_buttons.Remove(button);
+            //TODO: recalc cached rects of all buttons after this one
         }
         #endregion
 
@@ -654,19 +799,6 @@ namespace DaanRuiter.Util
             }
             return null;
         }
-        private static void ToggleConsole (bool state)
-        {
-            m_enabled = state;
-            m_isTyping = m_enabled;
-            m_inputString = "";
-            EndDrag();
-            EndResize();
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        }
-        private static void ToggleConsole ()
-        {
-            ToggleConsole(!m_enabled);
-        }
         private void TryCommand ()
         {
             string[] splitCommand = m_inputString.Split(' ');
@@ -716,6 +848,7 @@ namespace DaanRuiter.Util
             Color startColor = GUI.contentColor;
 
             GUI.depth = -9999;
+            GUISkin defaultSkin = GUI.skin;
             GUI.skin = m_skin;
 
             //Title
@@ -809,7 +942,30 @@ namespace DaanRuiter.Util
                 relativeY += m_printCommands[i].lineCount * m_fontSize;
                 if (m_printCommands[i].lineCount > 0)
                     relativeY += m_fontSize + 2;
-                
+
+            }
+            //-----------------------------------------------------------------------//
+            //Buttons
+            //-----------------------------------------------------------------------//
+            GUI.skin = defaultSkin;
+            GUI.skin.button.active.background = m_inputFieldActiveTexture;
+            for (int i = 0; i < m_buttons.Count; i++)
+            {
+                if (m_buttons[i].CustomTexture != null)
+                {
+                    GUI.skin.button.normal.background = m_buttons[i].CustomTexture;
+                    GUI.skin.button.hover.background = m_buttons[i].CustomHoverTexture;
+                } else
+                {
+                    GUI.skin.button.normal.background = m_buttonBackground;
+                    GUI.skin.button.hover.background = m_titleBarTexture;
+                }
+
+                Rect buttonRect = m_buttons[i].CachedRect;
+                buttonRect.position += m_closeButtonRect.position;
+                buttonRect.x += m_closeButtonRect.width;
+                if (GUI.Button(buttonRect, m_buttons[i].DisplayText))
+                    m_buttons[i].OnButtonPress();
             }
         }
 
@@ -877,6 +1033,31 @@ namespace DaanRuiter.Util
             m_resizeStartWindowSize = Vector2.zero;
         }
         
+        //Buttons
+        private static void RecalculateButtonRectangles(int startIndex)
+        {
+            for (int i = startIndex; i < m_buttons.Count; i++)
+            {
+                float heightButton = m_buttonFieldHeight / m_maxButtonsHeight;
+                float widthButton = m_buttonFieldWidth / m_maxButtonsWidth;
+
+                int row = 0;
+                int collum = 0;
+                if(i != 0)
+                {
+                    row = i;
+                    if (i >= m_maxButtonsHeight)
+                        row = i - (Mathf.FloorToInt(i / m_maxButtonsHeight) * m_maxButtonsHeight);
+                    collum = Mathf.CeilToInt(i / m_maxButtonsHeight);
+                }
+
+                Rect r = new Rect(collum * (widthButton + m_buttonMargin.x), row * (heightButton + m_buttonMargin.y), widthButton, heightButton);
+                r.x += m_buttonMargin.x;
+                
+                m_buttons[i].CacheRect(r);
+            }
+        }
+
         #endregion
 
         #region Properties
